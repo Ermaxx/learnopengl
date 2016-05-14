@@ -1,5 +1,7 @@
 #include "./camera.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 const GLfloat YAW = 90.0f;
 const GLfloat PITCH = 0.0f;
 const GLfloat SPEED = 3.0f;
@@ -55,8 +57,7 @@ void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset)
   Yaw += xoffset;
   Pitch -= yoffset;
 
-  if(Pitch > 89.0)
-    {
+  if(Pitch > 89.0) {
       Pitch = 89.0;
     }
   if(Pitch < -89.0)
