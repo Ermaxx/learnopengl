@@ -7,6 +7,8 @@
 
 #include <GL/glew.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 void Shader::Load(const char *vertexPath, const char *fragmentPath)
 {
   std::string vertexCode;
@@ -83,6 +85,18 @@ void Shader::Load(const char *vertexPath, const char *fragmentPath)
 
   glDeleteShader(vertex);
   glDeleteShader(fragment);
+}
+
+void Shader::InitUniformPositions() {
+  m_uniform[(int)ShaderUniform::ModelViewProjection] = glGetUniformLocation(m_program, "MVP");
+  m_uniform[(int)ShaderUniform::Model] = glGetUniformLocation(m_program, "Normal");
+  m_uniform[(int)ShaderUniform::LightDirection] = glGetUniformLocation(m_program, "lightDirection");
+}
+
+void Shader::SetUniforms(glm::mat4& MVP, glm::mat4& model, glm::vec3 lightDir) {
+  glUniform3fv(m_uniform[(int)ShaderUniform::ModelViewProjection], 1, glm::value_ptr(MVP));
+  glUniform3fv(m_uniform[(int)ShaderUniform::Model], 1, glm::value_ptr(model));
+  glUniform3fv(m_uniform[(int)ShaderUniform::LightDirection], 1, glm::value_ptr(lightDir));
 }
 
 void Shader::Use()

@@ -21,6 +21,35 @@
 #include <imgui.h>
 #include "./imgui_impl_gl2/imgui_impl_glfw_gl2.h"
 
+class TriUVNormMesh 
+{
+  GLuint VAO;
+
+  void Init(float *data) 
+  {
+    GLuint VBO;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    // vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(5 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+    glBindVertexArray(0);
+  }
+};
+
+
+
 GLfloat box_mesh[] = {
   -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
    0.5f, -0.5f, -0.5f,  1.0,  0.0f,  0.0f,  0.0f, -1.0f,
@@ -136,7 +165,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
   camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-void show_gui() {
+void build_gui() {
   ImGui::Begin("ImGui window");
   ImGui::Text("Camera:");
   ImGui::Separator();
@@ -302,11 +331,7 @@ int main()
 	  glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-      // glBindVertexArray(0);
-      // glBindTexture(GL_TEXTURE_2D, 0);
-      // glUseProgram(0);
-
-      show_gui();
+      build_gui();
 
       int display_x, display_y;
       glfwGetFramebufferSize(window, &display_x, &display_y);
