@@ -19,7 +19,7 @@ void Shader::Load(const char *vertexPath, const char *fragmentPath)
   vShaderFile.exceptions(std::ifstream::badbit);
   fShaderFile.exceptions(std::ifstream::badbit);
 
-  try 
+  try
     {
       vShaderFile.open(vertexPath);
       fShaderFile.open(fragmentPath);
@@ -35,7 +35,7 @@ void Shader::Load(const char *vertexPath, const char *fragmentPath)
       vertexCode = vShaderStream.str();
       fragmentCode = fShaderStream.str();
     }
-  catch(std::ifstream::failure e) 
+  catch(std::ifstream::failure e)
     {
       std::cout << "Couldn't read shader file" << std::endl;
     }
@@ -73,7 +73,7 @@ void Shader::Load(const char *vertexPath, const char *fragmentPath)
   glAttachShader(m_program, vertex);
   glAttachShader(m_program, fragment);
   glLinkProgram(m_program);
-  
+
   {
     glGetProgramiv(m_program, GL_LINK_STATUS, &success);
     if(success == false)
@@ -87,22 +87,37 @@ void Shader::Load(const char *vertexPath, const char *fragmentPath)
   glDeleteShader(fragment);
 }
 
-void Shader::InitUniformPositions() {
-  m_uniform[(int)ShaderUniform::ModelViewProjection] = glGetUniformLocation(m_program, "MVP");
-  m_uniform[(int)ShaderUniform::Model] = glGetUniformLocation(m_program, "Normal");
-  m_uniform[(int)ShaderUniform::LightDirection] = glGetUniformLocation(m_program, "lightDirection");
+void Shader::SetUniformNames(std::vector<const char *> uniform_names) {
+  m_uniform_handles.resize(uniform_names.size());
+
+  for(size_t i = 0; i < uniform_names.size(); i++)
+    {
+      m_uniform_handles[i] = glGetUniformLocation(m_program, uniform_names[i]);
+      if(m_uniform_handles[i] == -1)
+	{
+	  printf("Error: Couldn't get uniform location for: %s\n", uniform_names[i]);
+	}
+    }
 }
 
-void Shader::SetUniforms(glm::mat4& MVP, glm::mat4& model, glm::vec3 lightDir) {
-  glUniform3fv(m_uniform[(int)ShaderUniform::ModelViewProjection], 1, glm::value_ptr(MVP));
-  glUniform3fv(m_uniform[(int)ShaderUniform::Model], 1, glm::value_ptr(model));
-  glUniform3fv(m_uniform[(int)ShaderUniform::LightDirection], 1, glm::value_ptr(lightDir));
+void Shader::StartPassingUniforms()
+{
+  m_current_uniform_index = 0;
+}
+
+void Shader::SetUniform(glm::mat4& mat4)
+{
+  glUniformMatrix4fv(m_uniform_handles[m_current_uniform_index], 1, GL_FALSE, glm::value_ptr(mat4));
+  m_current_uniform_index++;
+}
+
+void Shader::SetUniform(glm::vec3& vec3)
+{
+  glUniform3fv(m_uniform_handles[m_current_uniform_index], 1, glm::value_ptr(vec3));
+  m_current_uniform_index++;
 }
 
 void Shader::Use()
 {
   glUseProgram(m_program);
 }
-
-
-

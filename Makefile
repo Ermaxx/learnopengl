@@ -15,7 +15,7 @@ OBJS=$(subst .cpp,.o,$(SRCS)) $(IMGUI_PATH)/imgui.o $(IMGUI_PATH)/imgui_draw.o
 all: tool
 
 tool: $(OBJS)
-	$(CXX) $(LDFLAGS) -o main $(OBJS) $(LDLIBS) 
+	$(CXX) $(LDFLAGS) -o main $(OBJS) $(LDLIBS)
 
 depend: .depend
 

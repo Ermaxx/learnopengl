@@ -10,7 +10,7 @@ const GLfloat ZOOM = 45.0f;
 
 void Camera::Init(glm::vec3 position)
 {
-  Position = glm::vec3(0, 0, -5);
+  Position = position;
   WorldUp = glm::vec3(0, 1, 0);
   Yaw = YAW;
   Pitch = PITCH;

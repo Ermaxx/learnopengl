@@ -1,24 +1,23 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <vector>
 
-enum class ShaderUniform {
-  ModelViewProjection = 0,
-  Model = 1,
-  LightDirection = 2,
-  Max = 3,
-};
+#include <glm/glm.hpp>
 
 class Shader
 {
- public:
-  int m_uniform[(int)ShaderUniform::Max];
-  
   unsigned int m_program;
+
+  std::vector<int> m_uniform_handles;
+  size_t m_current_uniform_index;
+
+ public:
 
   void Load(const char *vertexPath, const char *fragmentPath);
   void Use();
 
-  void InitUniformPositions();
-  void SetUniforms(glm::mat4& MVP, glm::mat4& model, glm::vec3 lightDir);
+  void SetUniformNames(std::vector<const char *> uniform_names);
+  void StartPassingUniforms();
+  void SetUniform(glm::mat4& mat4);
+  void SetUniform(glm::vec3& vec3);
 };

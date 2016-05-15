@@ -21,11 +21,11 @@
 #include <imgui.h>
 #include "./imgui_impl_gl2/imgui_impl_glfw_gl2.h"
 
-class TriUVNormMesh 
+class TriUVNormMesh
 {
   GLuint VAO;
 
-  void Init(float *data) 
+  void Init(float *data)
   {
     GLuint VBO;
 
@@ -236,6 +236,7 @@ int main()
 
   Shader shader;
   shader.Load("./shaders/first.vs", "./shaders/first.fs");
+  shader.SetUniformNames({ "MVP", "Normal", "lightDirection" });
 
   GLuint VBO;
   GLuint VAO;
@@ -314,19 +315,12 @@ int main()
 	  model = glm::rotate(model, angle, glm::vec3(1, 1, 0));
 
 	  glm::mat4 MVP = VP * model;
-
-	  GLint pos = glGetUniformLocation(shader.m_program, "MVP");
-	  assert(pos != -1);
-	  glUniformMatrix4fv(pos, 1, GL_FALSE, glm::value_ptr(MVP));
-
-	  pos = glGetUniformLocation(shader.m_program, "Normal");
-	  assert(pos != -1);
-	  glUniformMatrix4fv(pos, 1, GL_FALSE, glm::value_ptr(model));
-
-	  pos = glGetUniformLocation(shader.m_program, "lightDirection");
-	  assert(pos != -1);
 	  glm::vec3 lightDir = glm::vec3(0, 0, 1);
-	  glUniform3fv(pos, 1, glm::value_ptr(lightDir));
+
+	  shader.StartPassingUniforms();
+	  shader.SetUniform(MVP);
+	  shader.SetUniform(model);
+	  shader.SetUniform(lightDir);
 
 	  glDrawArrays(GL_TRIANGLES, 0, 36);
 	}

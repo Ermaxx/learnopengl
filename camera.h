@@ -34,4 +34,3 @@ class Camera
 
   void UpdateCameraVectors();
 };
-       
